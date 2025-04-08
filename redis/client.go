@@ -7,7 +7,7 @@ import (
 )
 
 var Client = redis.NewClient(&redis.Options{
-	Addr: "localhost:6379", // Подключение к локальному Redis
+	Addr: "localhost:6379",
 })
 
 var ctx = context.Background()
