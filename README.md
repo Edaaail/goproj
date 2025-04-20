@@ -1,4 +1,4 @@
-#Shorten Service
+# Shorten Service
 
 Microservice that generates short URL from long URL.
 
@@ -25,7 +25,7 @@ Docker for containerization
 4. docker-compose up --build
 
 ## Example
-Run 
+Run: 
 
  curl -X POST http://localhost:8080/shorten -H "Content-Type: application/json" -d "{\"long_url\": \"https://example.com/very/long/url\"}"
 
