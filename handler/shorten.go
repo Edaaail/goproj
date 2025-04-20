@@ -1,38 +1,33 @@
 package handler
 
 import (
-	"context"
 	"net/http"
 
 	"goproj/redis"
+	"goproj/utils"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-var ctx = context.Background()
-
-type Request struct {
-	URL string `json:"url"`
+type ShortenRequest struct {
+	LongURL string `json:"long_url"`
 }
 
 func ShortenURL(c *gin.Context) {
-	var req Request
-
-	if err := c.BindJSON(&req); err != nil || req.URL == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Неверный формат"})
+	var req ShortenRequest
+	if err := c.ShouldBindJSON(&req); err != nil || req.LongURL == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
 		return
 	}
 
-	shortID := uuid.New().String()[:6]
+	shortCode := utils.GenerateShortCode(req.LongURL)
+	shortURL := "http://localhost:8080/" + shortCode
 
-	err := redis.Client.Set(ctx, shortID, req.URL, 0).Err()
+	err := redis.SaveURL(shortCode, req.LongURL)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при сохранении в Redis"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store URL"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"short": "http://localhost:8080/" + shortID,
-	})
+	c.JSON(http.StatusOK, gin.H{"short_url": shortURL})
 }

@@ -1,14 +1,15 @@
-FROM golang:1.21
+FROM golang:1.23.5
 
 WORKDIR /app
 
 COPY go.mod ./
 COPY go.sum ./
-
 RUN go mod download
 
 COPY . .
 
-RUN go build -o main .
+RUN go build -o shorten-service .
 
-CMD ["./main"]
+EXPOSE 8080
+
+CMD ["./shorten-service"]
